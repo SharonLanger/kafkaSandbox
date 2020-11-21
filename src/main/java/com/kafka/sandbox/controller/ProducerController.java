@@ -14,7 +14,6 @@ public class ProducerController {
     @GetMapping("/helloProducer/{msg}")
     public String helloProducer(@PathVariable("msg") String msg) {
 
-        kafkaProducer.writeMsg(msg);
         System.out.println("Hello producer: " + msg);
         return "Hello producer";
     }
