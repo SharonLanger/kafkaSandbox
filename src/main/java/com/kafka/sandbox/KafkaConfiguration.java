@@ -1,11 +1,12 @@
 package com.kafka.sandbox;
 
-import com.kafka.sandbox.entity.User;
+import com.kafka.sandbox.entity.Point;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -22,8 +23,17 @@ import java.util.Map;
 @Configuration
 public class KafkaConfiguration {
 
+    @Value("${topic.name}")
+    private String topicName;
+
+    @Value("${topic.partitions}")
+    private String topicPartitions;
+
+    @Value("${topic.replicas}")
+    private String topicReplicas;
+
     @Bean
-    public ProducerFactory<String, User> producerFactory() {
+    public ProducerFactory<String, Point> producerFactory() {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
@@ -34,12 +44,12 @@ public class KafkaConfiguration {
     }
 
     @Bean
-    public KafkaTemplate<String, User> kafkaTemplate() {
+    public KafkaTemplate<String, Point> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 
     @Bean
-    public ConsumerFactory<String, User> consumerFactory() {
+    public ConsumerFactory<String, Point> consumerFactory() {
         Map<String, Object> config = new HashMap<>();
 
         config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "127.0.0.1:9092");
@@ -47,38 +57,22 @@ public class KafkaConfiguration {
         config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(User.class));
+        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(Point.class));
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, User> concurrentKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, User> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, Point> concurrentKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, Point> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(consumerFactory());
         return factory;
     }
 
 
     @Bean
-    public NewTopic firstTopic(){
-        return TopicBuilder.name("firstTopic")
-                .partitions(4)
-                .replicas(1)
-                .build();
-    }
-
-    @Bean
-    public NewTopic userTopic(){
-        return TopicBuilder.name("userTopic")
-                .partitions(4)
-                .replicas(1)
-                .build();
-    }
-
-    @Bean
-    public NewTopic pointTopic(){
-        return TopicBuilder.name("pointTopic")
-                .partitions(4)
-                .replicas(1)
+    public NewTopic topicCreator(){
+        return TopicBuilder.name(topicName)
+                .partitions(Integer.parseInt(topicPartitions))
+                .replicas(Integer.parseInt(topicReplicas))
                 .build();
     }
 }

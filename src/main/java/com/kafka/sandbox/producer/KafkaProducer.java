@@ -1,22 +1,30 @@
 package com.kafka.sandbox.producer;
 
+import com.kafka.sandbox.entity.Point;
 import com.kafka.sandbox.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class KafkaProducer {
 
-    private static final String TOPIC = "userTopic";
+    @Value("${topic.name}")
+    private String TOPIC;
 
     @Autowired
-    private KafkaTemplate<String, User> kafkaTemplate;
+    private KafkaTemplate<String, Point> kafkaTemplate;
 
 
-    public void writeMsg(String msg) {
+    public void insertPoint(Point point) {
 
-        System.out.println("writeMsg:" + msg);
-        kafkaTemplate.send(TOPIC, new User(msg, 18));
+        System.out.println("InsertPoint:");
+        kafkaTemplate.send(TOPIC, getPartition(point), String.valueOf(point.hashCode()), point);
+        System.out.println(point);
+    }
+
+    private Integer getPartition(Point point) {
+        return point.getX() <  50 ? 0 : 1;
     }
 }
