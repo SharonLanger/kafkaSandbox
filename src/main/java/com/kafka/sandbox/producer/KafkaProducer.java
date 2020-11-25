@@ -1,7 +1,6 @@
 package com.kafka.sandbox.producer;
 
 import com.kafka.sandbox.entity.Point;
-import com.kafka.sandbox.entity.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

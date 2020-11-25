@@ -1,5 +1,6 @@
 package com.kafka.sandbox.consumer;
 
+import com.kafka.sandbox.entity.AvgTotal;
 import com.kafka.sandbox.entity.Point;
 import com.kafka.sandbox.service.PointKmins;
 import lombok.extern.slf4j.Slf4j;
@@ -15,8 +16,10 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class KafkaConsumer {
 
-    private PointKmins pointKmins1 = new PointKmins(new Point(1,1),new Point(50,50));
+    @Autowired
+    private AvgTotal avgTotal;
 
+    private PointKmins pointKmins1 = new PointKmins(new Point(1,1),new Point(50,50));
     private PointKmins pointKmins2 = new PointKmins(new Point(1,1),new Point(50,50));
 
 
