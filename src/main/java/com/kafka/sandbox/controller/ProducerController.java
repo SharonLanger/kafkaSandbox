@@ -33,8 +33,40 @@ public class ProducerController {
     public String publishPoints() {
 
         IntStream.rangeClosed(1, POINTS_NUMBER).forEach(
-                i -> kafkaProducer.insertPoint(point.createPoint())
+                i -> kafkaProducer.insertPoint(point.createRandomPoint(false))
         );
+
+        // Send last point notifications to both partitions
+        kafkaProducer.insertPoint(new Point(0.0, 0.0, true));
+        kafkaProducer.insertPoint(new Point(99.0, 99.0, true));
+
+        return "Published successfully";
+    }
+
+    @PostMapping("/publishPointsTestPartition0")
+    public String publishPointsTestPartition0() {
+
+        IntStream.rangeClosed(1, POINTS_NUMBER).forEach(
+                i -> kafkaProducer.insertPoint(new Point(5,5))
+        );
+
+        // Send last point notifications to both partitions
+        kafkaProducer.insertPoint(new Point(0.0, 0.0, true));
+        kafkaProducer.insertPoint(new Point(99.0, 99.0, true));
+
+        return "Published successfully";
+    }
+
+    @PostMapping("/publishPointsTestPartition1")
+    public String publishPointsTestPartition1() {
+
+        IntStream.rangeClosed(1, POINTS_NUMBER).forEach(
+                i -> kafkaProducer.insertPoint(new Point(60,60))
+        );
+
+        // Send last point notifications to both partitions
+        kafkaProducer.insertPoint(new Point(0.0, 0.0, true));
+        kafkaProducer.insertPoint(new Point(99.0, 99.0, true));
 
         return "Published successfully";
     }

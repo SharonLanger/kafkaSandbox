@@ -18,12 +18,10 @@ public class KafkaProducer {
     @Autowired
     private KafkaTemplate<String, Point> kafkaTemplate;
 
-
     public void insertPoint(Point point) {
 
-        log.info("InsertPoint:");
         kafkaTemplate.send(TOPIC, getPartition(point), String.valueOf(point.hashCode()), point);
-        log.info(point.toString());
+        log.debug(point.toString());
     }
 
     private Integer getPartition(Point point) {
