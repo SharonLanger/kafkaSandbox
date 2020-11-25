@@ -2,6 +2,7 @@ package com.kafka.sandbox.controller;
 
 import com.kafka.sandbox.entity.Point;
 import com.kafka.sandbox.producer.KafkaProducer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +10,7 @@ import java.util.stream.IntStream;
 
 @RestController
 @RequestMapping("producer")
+@Slf4j
 public class ProducerController {
 
     private static final int POINTS_NUMBER = 10;
@@ -22,9 +24,7 @@ public class ProducerController {
     @GetMapping("/helloProducer/{msg}")
     public String helloProducer(@PathVariable("msg") String msg) {
 
-        System.out.println("Hello producer: " + msg);
-
-        IntStream.rangeClosed(1, POINTS_NUMBER).forEach(i -> System.out.println(point.createPoint()));
+        log.info("Hello producer: " + msg);
 
         return "Hello producer";
     }
