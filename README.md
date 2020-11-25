@@ -5,7 +5,7 @@ Kafka sandbox
 # Run zookeeper:
 
 	docker run --name zookeeper -p 2181:2181 zookeeper
-	docker run --name=zookeeper -d -e ZOOKEEPER_CLIENT_PORT=2181 -p 2181:2181 -p 2888:2888 -p 3888:3888 confluentinc/cp-zookeeper:latest
+	docker run --name=zookeeper -e ZOOKEEPER_CLIENT_PORT=2181 -p 2181:2181 -p 2888:2888 -p 3888:3888 confluentinc/cp-zookeeper:latest
 
 ### Fetch the zookeeper's container IP
 
@@ -20,4 +20,4 @@ Kafka sandbox
 
 # Start the Kafka server
 
-	docker run --name=kafka -e KAFKA_ZOOKEEPER_CONNECT=${Zookeeper_Server_IP}:2181 -e KAFKA_LISTENERS=PLAINTEXT://localhost:9092 -d -p 9092:9092 confluentinc/cp-kafka:latest
+	docker run --name=kafka -e KAFKA_ZOOKEEPER_CONNECT=${Zookeeper_Server_IP}:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092 -p 9092:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1  confluentinc/cp-kafka:latest
