@@ -24,7 +24,7 @@ import java.util.Map;
 public class KafkaConfiguration {
 
     @Value("${topic.name}")
-    private String topicName;
+    public String topicName;
 
     @Value("${topic.partitions}")
     private String topicPartitions;

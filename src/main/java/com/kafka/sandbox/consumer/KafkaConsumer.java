@@ -5,7 +5,6 @@ import com.kafka.sandbox.entity.Point;
 import com.kafka.sandbox.service.PointKmins;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.annotation.TopicPartition;
 import org.springframework.kafka.support.KafkaHeaders;
@@ -19,11 +18,14 @@ public class KafkaConsumer {
     @Autowired
     private AvgTotal avgTotal;
 
-    private PointKmins pointKmins1 = new PointKmins(new Point(1,1),new Point(50,50));
-    private PointKmins pointKmins2 = new PointKmins(new Point(1,1),new Point(50,50));
+    private PointKmins pointKmins1 = new PointKmins(new Point(1,1),new Point(100,100));
+    private PointKmins pointKmins2 = new PointKmins(new Point(1,1),new Point(100,100));
 
+    private static final String TOPIC = "pointTopic";
 
-    private static final String TOPIC = "userTopic";
+    public AvgTotal getResults() {
+        return avgTotal;
+    }
 
     @KafkaListener(
             id = TOPIC + "0",
@@ -40,13 +42,24 @@ public class KafkaConsumer {
         if ( !point.getLastPoint() ) {
             pointKmins1.updateAvgPoint(point);
         } else {
-            log.info("Finished calculating average in partition 0");
-            log.info("===========================================");
-            log.info("      Point group 1: x={}, y={}, total points: {}" ,
+
+            avgTotal.addAvgToTotal(
                     pointKmins1.getAvgPoint1().getX(),
                     pointKmins1.getAvgPoint1().getY(),
-                    pointKmins1.getAvgPoint1().getAvgPointsNumber());
-            log.info("      Point group 2: x={}, y={}, total points: {}" ,
+                    pointKmins1.getAvgPoint1().getAvgPointsNumber(), 1);
+            avgTotal.addAvgToTotal(
+                    pointKmins1.getAvgPoint2().getX(),
+                    pointKmins1.getAvgPoint2().getY(),
+                    pointKmins1.getAvgPoint2().getAvgPointsNumber(), 2);
+
+            log.info(
+                    "\nFinished calculating average in partition 0\n" +
+                    "===========================================\n" +
+                    "      Point group 1: x={}, y={}, total points: {}\n" +
+                    "      Point group 2: x={}, y={}, total points: {}",
+                    pointKmins1.getAvgPoint1().getX(),
+                    pointKmins1.getAvgPoint1().getY(),
+                    pointKmins1.getAvgPoint1().getAvgPointsNumber(),
                     pointKmins1.getAvgPoint2().getX(),
                     pointKmins1.getAvgPoint2().getY(),
                     pointKmins1.getAvgPoint2().getAvgPointsNumber());
@@ -69,13 +82,24 @@ public class KafkaConsumer {
         if ( !point.getLastPoint() ) {
             pointKmins2.updateAvgPoint(point);
         } else {
-            log.info("Finished calculating average in partition 1");
-            log.info("===========================================");
-            log.info("      Point group 1: x={}, y={}, total points: {}" ,
+
+            avgTotal.addAvgToTotal(
                     pointKmins2.getAvgPoint1().getX(),
                     pointKmins2.getAvgPoint1().getY(),
-                    pointKmins2.getAvgPoint1().getAvgPointsNumber());
-            log.info("      Point group 2: x={}, y={}, total points: {}" ,
+                    pointKmins2.getAvgPoint1().getAvgPointsNumber(), 1);
+            avgTotal.addAvgToTotal(
+                    pointKmins2.getAvgPoint2().getX(),
+                    pointKmins2.getAvgPoint2().getY(),
+                    pointKmins2.getAvgPoint2().getAvgPointsNumber(), 2);
+
+            log.info(
+                    "\nFinished calculating average in partition 1\n" +
+                    "===========================================\n" +
+                    "      Point group 1: x={}, y={}, total points: {}\n" +
+                    "      Point group 2: x={}, y={}, total points: {}",
+                    pointKmins2.getAvgPoint1().getX(),
+                    pointKmins2.getAvgPoint1().getY(),
+                    pointKmins2.getAvgPoint1().getAvgPointsNumber(),
                     pointKmins2.getAvgPoint2().getX(),
                     pointKmins2.getAvgPoint2().getY(),
                     pointKmins2.getAvgPoint2().getAvgPointsNumber());
