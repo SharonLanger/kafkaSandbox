@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 @Slf4j
 public class ProducerController {
 
-    private static final int POINTS_NUMBER = 10;
+    private static final int POINTS_NUMBER = 100000;
 
     @Autowired
     KafkaProducer kafkaProducer;
